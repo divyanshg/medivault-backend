@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+  doctor
+  hospital
+  insurance
+  pharmacy
+  lab
+  dentist
+}
+
+model User {
+  id             String    @id @default(uuid())
+  vaultId        String    @unique @default(cuid()) @map("vault_id")
+  vaultAddress   String    @unique @default("") @map("vault_address")
+  firstName      String
+  lastName       String
+  email          String?   @unique @map("email")
+  phoneNumber    String?   @unique @map("phone_number")
+  date_of_birth  DateTime? @map("date_of_birth")
+  role           Role      @default(user)
+  profilepicture String?   @default("https://www.pngitem.com/pimgs/m/30-307416_profile-icon-png-image-free-download-searchpng-employee.png") @map("profile_picture")
+
+  isDeleted Boolean @default(false) @map("is_deleted")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  Records   Records[]
+
+  @@index([email], name: "email")
+  @@index([phoneNumber], name: "phone_number")
+}
+
+enum RecordType {
+  surgical
+  medical
+  lab
+  radiology
+  prescription
+  dental
+  allergy
+  immunization
+  vaccination
+  insurance
+  bill
+}
+
+enum AddedBy {
+  self
+  doctor
+  hospital
+  insurance
+  pharmacy
+  lab
+  dentist
+}
+
+model Records {
+  id          String     @id @default(uuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  type        RecordType
+  title       String
+  description String?
+  files       File[]
+  fileCount   Int        @default(0) @map("file_count")
+  added_by    AddedBy    @map("added_by")
+
+  isDeleted Boolean @default(false) @map("is_deleted")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([userId], name: "user_id")
+  @@index([type], name: "type")
+}
+
+model File {
+  id       String  @id @default(uuid())
+  url      String
+  mimeType String
+  provider String
+  recordId String  @map("record_id")
+  record   Records @relation(fields: [recordId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([recordId], name: "record_id")
+  @@index([mimeType], name: "mime_type")
+}
