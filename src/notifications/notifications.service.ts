@@ -47,7 +47,7 @@ export class NotificationsService {
   }
 
   private generateOtp(): number {
-    const length = this.config.get<number>('otp_length');
+    const length = this.config.get<number>('OTP_LENGTH') ?? 4;
     if (length <= 0) {
       throw new Error('Length must be greater than 0');
     }
@@ -70,9 +70,7 @@ export class NotificationsService {
 
     //save to cache
     await this.cacheManager.set(verificationUUID, otp, 300);
-
     const message = `Your OTP for Medivault is ${otp}`;
-
     const response = await this.sms.send({
       numbers: phoneNumber,
       message,

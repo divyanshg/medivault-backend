@@ -61,6 +61,7 @@ export class AuthController {
   @Get('me')
   async me(@Req() req: Request) {
     const user = await this.authService.getUser(req.user.sub);
+    console.log(user);
     return user;
   }
 }
