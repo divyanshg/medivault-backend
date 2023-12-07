@@ -25,6 +25,7 @@ export class SMSService {
           },
         },
       );
+      console.log('SMS SENT');
       return response.data;
       // } else {
       // Logger.log(options);
