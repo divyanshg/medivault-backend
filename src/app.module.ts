@@ -25,7 +25,7 @@ import { UsersModule } from './users/users.module';
       useFactory: async (config: ConfigService) => ({
         store: (await redisStore({
           url: config.get<string>('REDIS_HOSTNAME'),
-          password: config.get<string>('REDIS_PASSWORD'),
+          // password: config.get<string>('REDIS_PASSWORD'),
         })) as unknown as CacheStore,
         ttl: 5,
       }),

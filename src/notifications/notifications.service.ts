@@ -68,13 +68,14 @@ export class NotificationsService {
     const otp = this.generateOtp();
     const verificationUUID = `MEDIVAULT-${uuidv4()}-${phoneNumber}`;
 
-    //save to cache
-    await this.cacheManager.set(verificationUUID, otp, 300);
     const message = `Your OTP for Medivault is ${otp}`;
     const response = await this.sms.send({
       numbers: phoneNumber,
       message,
     });
+
+    //save to cache
+    await this.cacheManager.set(verificationUUID, otp, 300);
 
     return {
       ...response,
